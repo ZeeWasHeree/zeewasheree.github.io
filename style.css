@@ -1,0 +1,400 @@
+/* Base Variables & Theming */
+:root {
+    /* Light Mode */
+    --bg-color: #FFFFFF;
+    --text-color: #000000;
+    --accent-color: #00E5E5; /* Cyan Terang */
+    
+    --card-bg: transparent;  
+    --component-bg: #FFFFFF; /* Untuk Sidebar */
+    --component-text: #000000; 
+    
+    /* Warna asli latar Skill Pill untuk Light Mode */
+    --pill-bg: #E0F7FA;
+    
+    --transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    color-scheme: only light;
+}
+
+[data-theme="dark"] {
+    /* Dark Mode */
+    --bg-color: #000000;
+    --text-color: #FFFFFF;
+    --accent-color: #E50000; /* Merah Terang */
+    
+    --card-bg: transparent;  
+    --component-bg: #000000; /* Untuk Sidebar */
+    --component-text: #FFFFFF; 
+    
+    /* Warna asli latar Skill Pill untuk Dark Mode */
+    --pill-bg: #2D0000;
+}
+
+
+
+
+/* Custom Font Fallback Strategy for Avalance */
+@font-face {
+    font-family: 'Avalance';
+    src: url('fonts/Avalance.woff2') format('woff2'); /* Pastikan kamu punya file font ini */
+    font-weight: bold;
+    font-style: normal;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html {
+    zoom: 0.9; /* Mengecilkan seluruh website menjadi 90% */
+}
+
+/* KHUSUS UNTUK FIREFOX (Karena Firefox tidak selalu mendukung properti zoom) */
+@-moz-document url-prefix() {
+    html {
+        transform: scale(0.9);
+        transform-origin: top center;
+        width: 111%; /* Menyesuaikan lebar akibat efek scale */
+    }
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color var(--transition), color var(--transition);
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}
+
+/* Typography */
+.font-avalance {
+    font-family: 'Avalance', 'Montserrat', sans-serif; /* Fallback ke Montserrat jika Avalance gagal load */
+    letter-spacing: 1px;
+}
+.highlight { color: var(--accent-color); transition: color var(--transition); }
+
+/* Header & Sidebar */
+.header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    padding: 20px 5%;
+    display: flex;
+    justify-content: space-between;
+    z-index: 100;
+    background: transparent; /* Seamless */
+}
+.icon-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color var(--transition);
+    
+    /* --- TAMBAHKAN 2 BARIS INI --- */
+    outline: none; /* Menghilangkan kotak biru/outline saat tombol di-klik di Desktop */
+    -webkit-tap-highlight-color: transparent; /* Menghilangkan kotak biru saat tombol ditahan/di-tap di HP */
+}
+
+/* Opsional: Pastikan saat tombol dalam status aktif/fokus, outline tetap tidak muncul */
+.icon-btn:focus, 
+.icon-btn:active {
+    outline: none;
+}
+
+.icon-btn:hover { color: var(--accent-color); }
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 0; left: -300px;
+    width: 280px; height: 130vh;
+    background-color: var(--component-bg); /* Menggunakan warna komponen */
+    z-index: 200;
+    transition: left var(--transition);
+    padding: 30px;
+}
+.sidebar-header h2, .sidebar-header .icon-btn {
+    color: var(--component-text);
+}
+.sidebar.active { left: 0; }
+.sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+.sidebar-links { list-style: none; }
+.sidebar-links li { margin-bottom: 20px; }
+.sidebar-links a {
+    text-decoration: none;
+    color: var(--component-text);
+    font-weight: 600;
+    font-size: 1.2rem;
+    transition: color 0.3s;
+}
+.sidebar-links a:hover { color: var(--accent-color); }
+.overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); opacity: 0; visibility: hidden; z-index: 150;
+    transition: opacity var(--transition);
+}
+.overlay.active { opacity: 1; visibility: visible; }
+
+/* Seamless Sections */
+.seamless-section {
+    padding: 100px 10%; /* Spacing besar tanpa border */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.seamless-section h2 { font-size: 2.5rem; margin-bottom: 20px; }
+
+/* Profile Image Styles */
+.home-content {
+    display: flex;
+    flex-direction: column; /* Menyusun foto, judul, dan deskripsi dari atas ke bawah */
+    align-items: center;    /* KUNCI: Menengahkan semua elemen secara horizontal */
+    justify-content: center;
+    text-align: center;     /* Memastikan teks ikut rata tengah */
+}
+
+.profile-img {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--accent-color);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    
+    /* KUNCI: Tambahkan 2 baris ini agar gambar otomatis ke tengah */
+    display: block;
+    margin: 0 auto 20px auto; /* Atas 0, Kiri-Kanan Auto (Tengah), Bawah 20px */
+    
+    transition: border-color var(--transition), transform var(--transition);
+}
+
+.profile-img:hover {
+    transform: scale(1.05);
+}
+
+
+.profile-img:hover {
+    transform: scale(1.05); /* Efek membesar sedikit saat di-hover */
+}
+
+/* --- DATA CARDS --- */
+/* Card diset transparan tanpa bayangan agar mengalir sempurna (seamless) */
+.card {
+    background: var(--card-bg);
+    box-shadow: none; /* Hilangkan kotak pembatas / shadow */
+    border-left: 2px solid var(--accent-color); /* Berikan garis aksen tipis di kiri agar tidak kosong */
+    border-radius: 0;
+    padding: 10px 0 10px 20px; /* Sesuaikan jarak karena border kiri */
+    transition: transform var(--transition);
+}
+.card:hover { transform: translateX(0px); } /* Efek hover diganti menjadi geser kanan sedikit */
+
+.card-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+.card-logo { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+.card-title { font-size: 1.5rem; color: var(--accent-color); }
+.card-subtitle { font-size: 0.9rem; opacity: 0.8; margin-bottom: 10px; }
+.card-desc { line-height: 1.6; margin-bottom: 15px; }
+
+/* Skill Pills */
+.pill-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+/* --- SKILL PILLS (KEMBALI KE STYLE ASLI) --- */
+.pill {
+    background: var(--pill-bg);
+    color: var(--text-color);
+    padding: 5px 15px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid var(--accent-color);
+}
+
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 10px 25px;
+    background: transparent;
+    color: var(--accent-color);
+    border: 2px solid var(--accent-color);
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+    outline: none; /* Menghilangkan kotak biru/outline saat tombol di-klik di Desktop */
+    -webkit-tap-highlight-color: transparent; 
+}
+.btn:hover { background: var(--accent-color); color: var(--bg-color); }
+
+/* Footer & Scroll Top */
+.footer { text-align: center; padding: 50px 10%; gap: 15px; }
+.social-links { display: flex; justify-content: center; gap: 20px; font-size: 1.5rem; }
+.social-links a { color: var(--text-color); transition: color 0.3s; }
+.social-links a:hover { color: var(--accent-color); }
+
+#scroll-top {
+    position: fixed; bottom: 30px; right: 30px;
+    background: var(--accent-color); color: var(--bg-color);
+    width: 45px; height: 45px; border-radius: 50%;
+    display: none; justify-content: center; align-items: center; z-index: 99;
+}
+
+/* --- GALLERY GRID STYLES --- */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.gallery-item {
+    width: 100%;
+    height: 250px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    transition: transform var(--transition), border var(--transition);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition);
+}
+
+/* Efek Hover Seamless ala Porto */
+.gallery-item:hover {
+    transform: translateY(-5px);
+    border: 2px solid var(--accent-color);
+}
+.gallery-item:hover img {
+    transform: scale(1.1);
+}
+
+/* --- TIMELINE EXPERIENCE STYLES --- */
+.timeline-container {
+    border-left: 2px solid var(--accent-color); /* Garis vertikal menggunakan warna aksen */
+    padding-left: 30px;
+    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 50px; /* Jarak antar pengalaman */
+}
+
+.timeline-item {
+    position: relative;
+    /* Efek hover seamless: bergeser sedikit ke kanan saat disorot */
+    transition: transform var(--transition);
+}
+
+/* Membuat Titik (Dot) pada Timeline */
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    /* Menggeser titik tepat ke tengah garis (30px padding + 1px pusat garis + 8px pusat titik = 39px) */
+    left: -39px; 
+    top: 5px;
+    width: 16px;
+    height: 16px;
+    background-color: var(--bg-color); /* Bagian tengah titik mengikuti warna background */
+    border: 4px solid var(--accent-color); /* Pinggiran titik menggunakan warna aksen */
+    border-radius: 50%;
+    box-sizing: border-box;
+    box-shadow: 0 0 10px var(--accent-color); /* Efek cahaya (glow) agar terlihat futuristik */
+    transition: background-color var(--transition), box-shadow var(--transition);
+}
+
+/* Mengubah warna titik menjadi solid saat item di-hover */
+.timeline-item:hover::before {
+    background-color: var(--accent-color);
+    box-shadow: 0 0 20px var(--accent-color);
+}
+
+/* --- ACHIEVEMENTS LIST MENARIK --- */
+.achievements-list {
+    list-style: none; /* Hilangkan titik (bullet) bawaan HTML */
+    padding-left: 0;
+    margin: 10px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Jarak antar prestasi */
+}
+
+.achievements-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px; /* Jarak ikon dan teks */
+    font-size: 0.95rem;
+    line-height: 1.5;
+    background: rgba(128, 128, 128, 0.05); /* Memberikan latar transparan sangat tipis */
+    padding: 12px 15px;
+    border-radius: 8px;
+    border-left: 2px solid var(--accent-color); /* Garis aksen tipis di kiri */
+    color: var(--text-color);
+    transition: transform var(--transition), background var(--transition);
+}
+
+/* Efek Hover Seamless ala Porto */
+.achievements-list li:hover {
+    transform: translateX(5px);
+    background: rgba(128, 128, 128, 0.1);
+}
+
+.achievements-list li i {
+    color: var(--accent-color); /* Ikon trofi akan menyala (merah/cyan) sesuai tema */
+    font-size: 1.1rem;
+    margin-top: 2px;
+}
+
+/* --- NUMBERING SYSTEM STYLES (EXPERIENCE & PROJECTS) --- */
+.numbered-container {
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+}
+
+.numbered-item {
+    display: flex;
+    gap: 25px;
+    align-items: flex-start;
+    padding-bottom: 30px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2); /* Garis pembatas tipis di bawah */
+    transition: transform var(--transition);
+}
+
+/* Efek Hover Seamless */
+.numbered-item:hover {
+    transform: translateX(10px);
+}
+
+/* Desain Angka Besar bergaya Outline (Cyberpunk/Minimalist) */
+.numbered-index {
+    font-family: 'Avalance', 'Montserrat', sans-serif;
+    font-size: 4rem;
+    font-weight: 700;
+    color: transparent; /* Bagian dalam angka transparan */
+    -webkit-text-stroke: 2px var(--accent-color); /* Garis tepi menggunakan warna aksen (Merah/Cyan) */
+    line-height: 0.8;
+    min-width: 70px;
+}
+
+.numbered-content {
+    flex: 1;
+}
+
+/* Responsif untuk Layar HP */
+@media screen and (max-width: 768px) {
+    .numbered-item {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .numbered-index {
+        font-size: 3rem;
+    }
+}

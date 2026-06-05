@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zeee | Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .admin-container {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 700px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            transition: padding var(--transition), max-width var(--transition);
+        }
+
+        .admin-header { text-align: center; margin-bottom: 30px; }
+        .admin-header h2 { font-size: 2rem; margin-bottom: 10px; }
+        
+        .input-group { display: flex; flex-direction: column; margin-bottom: 20px; }
+        .input-group label { margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; color: var(--accent-color); }
+        
+        .input-field {
+            background: var(--bg-color); color: var(--text-color);
+            border: 2px solid transparent; padding: 12px 15px;
+            border-radius: 8px; font-family: 'Montserrat', sans-serif;
+            font-size: 1rem; transition: border var(--transition); outline: none;
+            width: 100%; box-sizing: border-box;
+        }
+        .input-field:focus { border: 2px solid var(--accent-color); }
+        textarea.input-field { resize: vertical; min-height: 100px; }
+        select.input-field { cursor: pointer; appearance: none; }
+
+        .form-section { display: none; margin-top: 20px; }
+        .form-section.active { display: block; animation: fadeIn 0.4s ease forwards; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-full { width: 100%; text-align: center; cursor: pointer; box-sizing: border-box; margin-top: 10px; }
+        .btn-cancel { background: transparent; border: 2px solid gray; color: gray; display: none; }
+        .btn-cancel:hover { background: gray; color: white; }
+        .help-text { font-size: 0.8rem; opacity: 0.7; margin-top: 5px; font-style: italic; }
+
+        /* --- LIST DATA EXISTING --- */
+        .data-list-container {
+            margin-top: 40px; border-top: 1px solid rgba(128,128,128,0.2); padding-top: 20px;
+        }
+        .data-item {
+            background: var(--bg-color); padding: 15px; border-radius: 8px;
+            margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .data-info h4 { color: var(--accent-color); margin-bottom: 5px; }
+        .data-info p { font-size: 0.85rem; opacity: 0.8; }
+        .action-btns { display: flex; gap: 10px; }
+        .btn-edit { background: transparent; border: 1px solid var(--accent-color); color: var(--accent-color); padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+        .btn-delete { background: transparent; border: 1px solid #DA0000; color: #DA0000; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+        .btn-edit:hover { background: var(--accent-color); color: var(--bg-color); }
+        .btn-delete:hover { background: #DA0000; color: white; }
+
+        @media screen and (max-width: 768px) {
+            body { padding: 15px; align-items: flex-start; }
+            .admin-container { padding: 25px 20px; margin-top: 20px; }
+            .admin-header h2 { font-size: 1.5rem; }
+            .data-item { flex-direction: column; align-items: flex-start; gap: 10px; }
+        }
+        .btn-move { background: transparent; border: 1px solid var(--text-color); color: var(--text-color); padding: 5px; border-radius: 5px; cursor: pointer; transition: 0.3s; }
+        .btn-move:hover { background: var(--text-color); color: var(--bg-color); }
+    </style>
+</head>
+<body>
+
+    <div id="login-section" class="admin-container">
+        <div class="admin-header">
+            <h2 class="font-avalance highlight">Admin Access</h2>
+            <p>Silahkan login untuk mengubah portfoliom</p>
+        </div>
+        <div class="input-group"><label>Email</label><input type="email" id="email" class="input-field"></div>
+        <div class="input-group"><label>Password</label><input type="password" id="password" class="input-field"></div>
+        <button id="login-btn" class="btn btn-full">Login</button>
+    </div>
+
+    <div id="dashboard-section" class="admin-container" style="display:none;">
+        <div class="admin-header">
+            <h2 class="font-avalance highlight">Ubah Data</h2>
+            <p>Pilih kategori untuk menambah, mengubah, atau menghapus data.</p>
+        </div>
+        
+        <div class="input-group">
+            <label>Kategori</label>
+            <select id="kategori" class="input-field">
+                <option value="" disabled selected>-- Pilih Kategori --</option>
+                <option value="education">Education</option>
+                <option value="experience">Experience</option>
+                <option value="projects">Projects</option>
+            </select>
+        </div>
+
+        <div id="form-education" class="form-section">
+            <div class="input-group"><label>Nama Sekolah</label><input type="text" id="edu-school" class="input-field"></div>
+            <div class="input-group"><label>URL Logo</label><input type="text" id="edu-logo" class="input-field" placeholder="./img/logo.png"></div>
+            <div class="input-group"><label>Durasi</label><input type="text" id="edu-duration" class="input-field"></div>
+            <div class="input-group"><label>Deskripsi</label><textarea id="edu-desc" class="input-field"></textarea></div>
+            <div class="input-group"><label>Pencapaian</label><textarea id="edu-achievements" class="input-field" placeholder="Pisahkan dengan koma"></textarea></div>
+            <div class="input-group"><label>Skill Pills</label><input type="text" id="edu-skills" class="input-field" placeholder="Pisahkan dengan koma"></div>
+        </div>
+
+        <div id="form-experience" class="form-section">
+            <div class="input-group"><label>Nama Pengalaman</label><input type="text" id="exp-title" class="input-field"></div>
+            <div class="input-group"><label>Posisi/Jabatan</label><input type="text" id="exp-position" class="input-field"></div>
+            <div class="input-group"><label>Durasi</label><input type="text" id="exp-duration" class="input-field"></div>
+            <div class="input-group"><label>Deskripsi</label><textarea id="exp-desc" class="input-field"></textarea></div>
+            <div class="input-group"><label>Skill Pills</label><input type="text" id="exp-skills" class="input-field" placeholder="Pisahkan dengan koma"></div>
+            <div class="input-group"><label>Link Blog</label><input type="text" id="exp-link" class="input-field"></div>
+        </div>
+
+        <div id="form-projects" class="form-section">
+            <div class="input-group"><label>Nama Project</label><input type="text" id="proj-name" class="input-field"></div>
+            <div class="input-group"><label>Deskripsi</label><textarea id="proj-desc" class="input-field"></textarea></div>
+            <div class="input-group"><label>Skill Pills</label><input type="text" id="proj-skills" class="input-field" placeholder="Pisahkan dengan koma"></div>
+            <div class="input-group"><label>Link Blog</label><input type="text" id="proj-link" class="input-field"></div>
+        </div>
+
+        <button id="submit-data-btn" class="btn btn-full" style="display:none;">Simpan ke Firestore</button>
+        <button id="cancel-edit-btn" class="btn btn-full btn-cancel">Batalkan Edit</button>
+
+        <div id="data-list" class="data-list-container" style="display:none;">
+            <h3 class="font-avalance">Data Tersimpan</h3>
+            <div id="list-content"></div>
+        </div>
+
+        <button id="logout-btn" class="btn btn-full" style="margin-top: 30px; border-color: gray; color: gray;">Logout</button>
+    </div>
+
+    <script type="module" src="script.js"></script>
+        <script type="module">
+        import { db } from './script.js';
+        import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const dropdownKategori = document.getElementById('kategori');
+        const formEdu = document.getElementById('form-education');
+        const formExp = document.getElementById('form-experience');
+        const formProj = document.getElementById('form-projects');
+        const submitBtn = document.getElementById('submit-data-btn');
+        const cancelBtn = document.getElementById('cancel-edit-btn');
+        const dataListContainer = document.getElementById('data-list');
+        const listContent = document.getElementById('list-content');
+
+        let currentEditId = null;
+        let currentDataArray = []; // Menyimpan array data untuk fitur rearrange
+
+        dropdownKategori.addEventListener('change', (e) => {
+            resetForm();
+            const val = e.target.value;
+            formEdu.classList.remove('active');
+            formExp.classList.remove('active');
+            formProj.classList.remove('active');
+            submitBtn.style.display = 'block';
+
+            if (val === 'education') formEdu.classList.add('active');
+            else if (val === 'experience') formExp.classList.add('active');
+            else if (val === 'projects') formProj.classList.add('active');
+
+            fetchAndRenderData(val);
+        });
+
+        const parseArray = (str) => {
+            if (!str) return [];
+            return str.split(',').map(item => item.trim()).filter(item => item !== '');
+        };
+
+        const resetForm = () => {
+            document.querySelectorAll('input, textarea').forEach(el => {
+                if(el.id !== 'email' && el.id !== 'password') el.value = '';
+            });
+            currentEditId = null;
+            submitBtn.innerText = "Simpan ke Firestore";
+            cancelBtn.style.display = 'none';
+        };
+
+        cancelBtn.addEventListener('click', resetForm);
+
+        // --- FETCH & TAMPILKAN DATA ---
+        async function fetchAndRenderData(kategori) {
+            dataListContainer.style.display = 'block';
+            listContent.innerHTML = '<p>Memuat data...</p>';
+            
+            try {
+                const snapshot = await getDocs(collection(db, kategori));
+                currentDataArray = [];
+                
+                snapshot.forEach(docSnap => {
+                    currentDataArray.push({ id: docSnap.id, ...docSnap.data() });
+                });
+
+                // Trik JS: Urutkan array berdasarkan field 'order'
+                currentDataArray.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+                listContent.innerHTML = '';
+                if(currentDataArray.length === 0) {
+                    listContent.innerHTML = '<p>Tidak ada data ditemukan.</p>';
+                    return;
+                }
+
+                currentDataArray.forEach((data, index) => {
+                    const title = data.school || data.title || data.projectName || "Tanpa Nama";
+                    const item = document.createElement('div');
+                    item.className = 'data-item';
+                    
+                    // Tambahkan Tombol Move Up / Move Down
+                    item.innerHTML = `
+                        <div class="data-info">
+                            <h4>${title}</h4>
+                            <p>ID: ${data.id}</p>
+                        </div>
+                        <div class="action-btns">
+                            ${index > 0 ? `<button class="btn-move btn-up">↑️</button>` : ''}
+                            ${index < currentDataArray.length - 1 ? `<button class="btn-move btn-down">↓️</button>` : ''}
+                            <button class="btn-edit" style="margin-left: 10px;">Edit</button>
+                            <button class="btn-delete">Hapus</button>
+                        </div>
+                    `;
+                    
+                    // Listener untuk Geser Naik
+                    if (index > 0) {
+                        item.querySelector('.btn-up').addEventListener('click', () => moveItem(index, 'up', kategori));
+                    }
+                    // Listener untuk Geser Turun
+                    if (index < currentDataArray.length - 1) {
+                        item.querySelector('.btn-down').addEventListener('click', () => moveItem(index, 'down', kategori));
+                    }
+
+                    // Listener Edit
+                    item.querySelector('.btn-edit').addEventListener('click', () => {
+                        currentEditId = data.id;
+                        submitBtn.innerText = "Update Data";
+                        cancelBtn.style.display = 'block';
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                        if (kategori === 'education') {
+                            document.getElementById('edu-school').value = data.school || '';
+                            document.getElementById('edu-logo').value = data.logoUrl || '';
+                            document.getElementById('edu-duration').value = data.duration || '';
+                            document.getElementById('edu-desc').value = data.desc || '';
+                            document.getElementById('edu-achievements').value = (data.achievements || []).join(', ');
+                            document.getElementById('edu-skills').value = (data.skills || []).join(', ');
+                        } else if (kategori === 'experience') {
+                            document.getElementById('exp-title').value = data.title || '';
+                            document.getElementById('exp-position').value = data.position || '';
+                            document.getElementById('exp-duration').value = data.duration || '';
+                            document.getElementById('exp-desc').value = data.desc || '';
+                            document.getElementById('exp-skills').value = (data.skills || []).join(', ');
+                            document.getElementById('exp-link').value = data.blogLink || '';
+                        } else if (kategori === 'projects') {
+                            document.getElementById('proj-name').value = data.projectName || '';
+                            document.getElementById('proj-desc').value = data.desc || '';
+                            document.getElementById('proj-skills').value = (data.skills || []).join(', ');
+                            document.getElementById('proj-link').value = data.blogLink || '';
+                        }
+                    });
+
+                    // Listener Hapus
+                    item.querySelector('.btn-delete').addEventListener('click', async () => {
+                        if(confirm(`Yakin ingin menghapus ${title}?`)) {
+                            await deleteDoc(doc(db, kategori, data.id));
+                            fetchAndRenderData(kategori);
+                        }
+                    });
+
+                    listContent.appendChild(item);
+                });
+            } catch (error) {
+                listContent.innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        }
+
+        // --- FUNGSI MENGUBAH URUTAN (SWAP) ---
+        async function moveItem(index, direction, kategori) {
+            listContent.innerHTML = '<p>Menyimpan urutan baru...</p>';
+            
+            // Menukar posisi di dalam Array
+            if (direction === 'up') {
+                let temp = currentDataArray[index];
+                currentDataArray[index] = currentDataArray[index - 1];
+                currentDataArray[index - 1] = temp;
+            } else if (direction === 'down') {
+                let temp = currentDataArray[index];
+                currentDataArray[index] = currentDataArray[index + 1];
+                currentDataArray[index + 1] = temp;
+            }
+
+            // Menyimpan urutan baru ke Firestore berdasarkan posisi Array terbaru
+            for (let i = 0; i < currentDataArray.length; i++) {
+                await updateDoc(doc(db, kategori, currentDataArray[i].id), { order: i });
+            }
+            fetchAndRenderData(kategori);
+        }
+
+        // --- LOGIKA SIMPAN / UPDATE ---
+        submitBtn.addEventListener('click', async () => {
+            const kategori = dropdownKategori.value;
+            let dataToSave = {};
+
+            if (kategori === 'education') {
+                dataToSave = { school: document.getElementById('edu-school').value, logoUrl: document.getElementById('edu-logo').value, duration: document.getElementById('edu-duration').value, desc: document.getElementById('edu-desc').value, achievements: parseArray(document.getElementById('edu-achievements').value), skills: parseArray(document.getElementById('edu-skills').value) };
+            } else if (kategori === 'experience') {
+                dataToSave = { title: document.getElementById('exp-title').value, position: document.getElementById('exp-position').value, duration: document.getElementById('exp-duration').value, desc: document.getElementById('exp-desc').value, skills: parseArray(document.getElementById('exp-skills').value), blogLink: document.getElementById('exp-link').value };
+            } else if (kategori === 'projects') {
+                dataToSave = { projectName: document.getElementById('proj-name').value, desc: document.getElementById('proj-desc').value, skills: parseArray(document.getElementById('proj-skills').value), blogLink: document.getElementById('proj-link').value };
+            }
+
+            try {
+                submitBtn.innerText = "Menyimpan...";
+                
+                if (currentEditId) {
+                    await updateDoc(doc(db, kategori, currentEditId), dataToSave);
+                } else {
+                    // PENTING: Berikan nilai 'order' default agar item baru selalu berada di urutan paling bawah
+                    dataToSave.order = Date.now(); 
+                    await addDoc(collection(db, kategori), dataToSave);
+                }
+                resetForm();
+                fetchAndRenderData(kategori);
+            } catch (error) {
+                alert("Gagal menyimpan: " + error.message);
+                submitBtn.innerText = currentEditId ? "Update Data" : "Simpan ke Firestore";
+            }
+        });
+    </script>
+</body>
+</html>
